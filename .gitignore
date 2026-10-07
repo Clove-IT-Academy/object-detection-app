@@ -1,0 +1,17 @@
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+
+# Keep locally captured or personal media out of source control.
+local_media/
+*.avi
+*.m4v
+*.mkv
+*.mov
+*.mp4
+*.webm
