@@ -1,0 +1,10 @@
+# Paths are relative to this configuration file, not the shell's current directory.
+bundle: ../models/yolo26n/bundle.json
+camera: 0
+device: cpu
+input_size: 640
+confidence: 0.35
+iou: 0.7
+max_detections: 100
+read_retries: 3
+window_title: Object Detection App

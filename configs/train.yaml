@@ -1,0 +1,8 @@
+# Starting values only: select using your dataset and validation evidence.
+epochs: 50
+batch: 8
+imgsz: 640
+device: cpu
+seed: 42
+patience: 10
+workers: 0

@@ -1,0 +1,7 @@
+# Replace names and create independently grouped, annotated splits before training.
+path: ../data/custom-v1
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: replace_with_your_class

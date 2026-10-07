@@ -1,0 +1,6 @@
+include README.md AGENTS.md DEVELOPMENT_PLAN.md main.py requirements.lock.txt
+include Object_Detection_System_Plan_and_Architecture.pdf
+recursive-include configs *.yaml
+recursive-include scripts *.py
+recursive-include docs *.md
+recursive-include reports *.md *.json

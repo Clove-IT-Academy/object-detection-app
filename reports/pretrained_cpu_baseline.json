@@ -1,0 +1,33 @@
+{
+  "environment": {
+    "python": "3.14.7",
+    "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "packages": {
+      "ultralytics": "8.4.174",
+      "torch": "2.14.1",
+      "torchvision": "0.29.1",
+      "opencv-python": "5.0.0.93",
+      "numpy": "2.5.3",
+      "PyYAML": "6.0.3"
+    }
+  },
+  "bundle": "/Users/shashankjha/workspace/training/applied-ai-ml/object-detection-app/models/yolo26n/bundle.json",
+  "device": "cpu",
+  "input_size": 640,
+  "batch_size": 1,
+  "warmup_per_image": 3,
+  "iterations_per_image": 10,
+  "samples": 10,
+  "median_ms": 27.31372949983779,
+  "p95_ms": 28.58152934941245,
+  "backend_stages_median_ms": {
+    "preprocess": 0.6187500002852175,
+    "inference": 26.13354149980296,
+    "postprocess": 0.314312500449887
+  },
+  "boundaries": "predict + output validation; excludes image decode, camera and display",
+  "image_sha256": [
+    "c02019c4979c191eb739ddd944445ef408dad5679acab6fd520ef9d434bfbc63"
+  ]
+}

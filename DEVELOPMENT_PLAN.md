@@ -1,7 +1,7 @@
 # Object Detection App: Development Plan
 
 Date: 2026-10-07  
-Status: Planning baseline; implementation has not started.  
+Status: Development implementation available; see `docs/IMPLEMENTATION_STATUS.md` for verified work and unresolved gates.  
 Source: `Object_Detection_System_Plan_and_Architecture.pdf`, all eight pages.  
 Purpose: Provide durable context and an ordered execution plan for building, training, testing, releasing, and maintaining the application.
 
@@ -11,7 +11,7 @@ Read the architecture PDF and this plan before implementation. The PDF defines t
 
 Work through the numbered steps in order, completing each gate before depending on its output. Camera and rendering work may proceed with a fake detector while data preparation or training is underway. Do not treat that scaffold as evidence of model accuracy. Record actual decisions, commands, results, and deviations in the designated project documents. Update the progress checklist at the end as work is completed.
 
-Paths in this document are relative to `object-detection-app/`. They describe planned files unless explicitly identified as existing. The current project contains the architecture PDF and an existing `venv/`; no application source, dataset, or trained model was found during this review. Inspect the environment before adopting it; its presence does not establish dependency compatibility.
+Paths in this document are relative to `object-detection-app/`. They describe planned files unless explicitly identified as existing. At the initial planning review, the project contained only the architecture PDF and an existing `venv/`. The subsequent implementation adds source, tests, configs, documentation, a pretrained checkpoint and a smoke-verified ONNX export. No custom project dataset or quality-validated custom model exists. See the implementation status before continuing; an environment's presence alone does not establish compatibility.
 
 ## 2. Product goal and boundaries
 
@@ -360,12 +360,12 @@ Runtime scaffolding and synthetic tests can run alongside data work after contra
 
 - [x] Review the architecture PDF and create this execution plan.
 - [ ] Step 1: Product brief, class list, initial acceptance criteria.
-- [ ] Step 2: Reproducible environment and source scaffold.
+- [x] Step 2: Reproducible environment and source scaffold (tested project venv; dependency lock and CLI available).
 - [ ] Step 3: Feasibility baseline and finalized targets.
 - [ ] Step 4: Representative data and reviewed annotations.
 - [ ] Step 5: Leakage-aware versioned splits.
 - [ ] Step 6: Fine-tuned candidate and validation selection.
-- [ ] Step 7: Runtime modules and synthetic tests.
+- [x] Step 7: Runtime modules and synthetic tests (geometry, filtering, bundle, config and lifecycle checks pass).
 - [ ] Step 8: Trained-model webcam integration.
 - [ ] Step 9: Measured and accepted responsiveness.
 - [ ] Step 10: Verified export and deployment bundle.

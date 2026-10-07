@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "object-detection-app"
+version = "0.1.0"
+description = "Local webcam object detection with versioned YOLO model bundles"
+requires-python = ">=3.14"
+dependencies = ["ultralytics==8.4.174", "opencv-python==5.0.0.93", "numpy==2.5.3", "PyYAML==6.0.3"]
+
+[project.optional-dependencies]
+dev = ["pytest==9.1.1", "ruff==0.16.10", "build==1.6.1"]
+export = ["onnx==1.23.2", "onnxruntime==1.30.0"]
+
+[project.scripts]
+object-detection = "object_detection_app.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["error::DeprecationWarning:object_detection_app.*"]
+markers = ["model: requires local checkpoint and ONNX model bundles"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
