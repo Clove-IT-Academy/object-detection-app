@@ -8,7 +8,7 @@ evaluation remain pending until project classes and a representative dataset are
 
 ## Run the existing installation
 
-From this project directory:
+From this project directory, on macOS/Linux:
 
 ```bash
 venv/bin/python main.py
@@ -19,6 +19,15 @@ Equivalent command with explicit settings:
 ```bash
 venv/bin/python -m object_detection_app run --camera 0 --confidence 0.35 --device cpu
 ```
+
+On Windows, after completing the Windows setup below, use PowerShell:
+
+```powershell
+.\venv\Scripts\python.exe main.py
+.\venv\Scripts\python.exe -m object_detection_app run --camera 0 --confidence 0.35 --device cpu
+```
+
+Activation is optional: these commands directly select the project's virtual environment.
 
 Controls: **Q**, **Esc**, or native window close quits; **+**/**=** increases confidence
 by 0.05; **-**/**_** decreases it. The threshold stays between 0 and 1. Adjustments last
@@ -31,7 +40,7 @@ hosting Python (your terminal or Codex), then restart that app and run again. Cl
 applications using the camera and try another `--camera` index if necessary. If a hosting
 app cannot request access, run the same command from an interactive terminal.
 
-## Recreate the environment
+## Recreate the environment on macOS/Linux
 
 Tested dependency installation and still-image inference: Python **3.14.7**, macOS
 **27.0.1**, Apple M4/arm64, CPU. Live camera/display behavior on this host remains pending
@@ -60,6 +69,90 @@ Current direct runtime versions are pinned in `pyproject.toml`: Ultralytics 8.4.
 OpenCV 5.0.0.93, NumPy 2.5.3, and PyYAML 6.0.3. ONNX 1.23.2 and ONNX Runtime 1.30.0
 are included in the tested environment. These were resolved from current PyPI releases;
 upgrades should repeat the affected tests instead of silently changing dependencies.
+
+## Windows setup and troubleshooting
+
+Windows instructions are provided for local development; installation, webcam behavior,
+and performance on Windows have **not been verified**. Start with a 64-bit Python 3.14
+installation from [Python's official website](https://www.python.org/downloads/windows/)
+and open PowerShell in `object-detection-app`. Confirm the selected interpreter:
+
+```powershell
+py -3.14 --version
+```
+
+If `py` is unavailable, use the installed Python 3.14 executable instead and confirm its
+version before creating the environment. Create a fresh Windows venv; do not copy the
+macOS `venv` folder, because virtual environments are platform-specific and not portable.
+See the [Python venv documentation](https://docs.python.org/3.14/library/venv.html).
+
+```powershell
+py -3.14 -m venv venv
+.\venv\Scripts\python.exe -m pip install --upgrade pip
+.\venv\Scripts\python.exe -m pip install setuptools==84.0.0
+.\venv\Scripts\python.exe -m pip install --no-build-isolation -e ".[dev,export]"
+.\venv\Scripts\python.exe -m pip check
+.\venv\Scripts\python.exe -m object_detection_app setup-model
+.\venv\Scripts\python.exe main.py
+```
+
+The existing `requirements.lock.txt` records the macOS environment. Windows setup above
+uses the project's pinned direct dependencies and lets pip resolve compatible Windows
+transitive packages. If pip reports that a pinned version has no compatible wheel, check
+the Python version/architecture and package support; do not assume this platform is verified
+or silently change versions. After successful installation and verification, save a separate
+Windows lock rather than replacing the macOS one:
+
+```powershell
+.\venv\Scripts\python.exe -m pip freeze --exclude object-detection-app | Set-Content -Encoding ascii requirements.windows.lock.txt
+```
+
+Future installations on the same verified Windows/Python target can install that lock,
+then install the application with `--no-deps --no-build-isolation -e .`.
+
+All later commands in this README also work with the Windows interpreter: replace
+`venv/bin/python` with `.\venv\Scripts\python.exe` and keep the remaining arguments.
+For example, `scripts/manage.py` can be written as `scripts\manage.py`. Quote paths that
+contain spaces. In YAML, prefer forward slashes (such as `../models/yolo26n/bundle.json`)
+or single-quoted Windows paths so backslashes are not interpreted as escape sequences.
+
+Command Prompt users can use `venv\Scripts\python.exe` without the leading `.\`; the
+PowerShell pipeline for saving the lock can be replaced with:
+
+```bat
+venv\Scripts\python.exe -m pip freeze --exclude object-detection-app > requirements.windows.lock.txt
+```
+
+No PowerShell activation or execution-policy change is needed when calling `python.exe`
+directly. Optional activation is `.\venv\Scripts\Activate.ps1` in PowerShell or
+`venv\Scripts\activate.bat` in Command Prompt; if PowerShell blocks activation, continue
+using the explicit interpreter commands above.
+
+For camera access on Windows 11, open **Settings → Privacy & security → Camera** and
+enable **Camera access**, **Let apps access your camera**, and **Let desktop apps access
+your camera**. On Windows 10, open **Settings → Privacy → Camera** and enable the
+corresponding device/app/desktop camera access settings. The Python/OpenCV app is a desktop
+application. If controls are managed by your organization, contact its administrator.
+See [Microsoft's camera permission guidance](https://support.microsoft.com/en-us/windows/privacy/manage-app-permissions-for-a-camera-in-windows).
+
+If the camera still fails, check it in the Windows Camera app, then close Camera, Teams,
+Zoom, browsers, and other applications using it. Check a physical privacy shutter/USB
+connection, try `--camera 1`, and restart the terminal after permission changes. Run the
+native Windows interpreter from a desktop session for this guide, rather than assuming
+that WSL, a remote session, or a headless environment has webcam/GUI access. Use `--device cpu`
+initially; CUDA requires separately checked hardware, drivers, and a compatible PyTorch build.
+
+Verify the Windows setup with camera-free checks first:
+
+```powershell
+.\venv\Scripts\python.exe -m pytest -q
+.\venv\Scripts\python.exe -m ruff check src tests scripts main.py
+.\venv\Scripts\python.exe -m object_detection_app run --max-frames 100
+```
+
+The last command opens the actual camera. Manually check Q/Esc/native close, +/- controls,
+repeated starts, camera failures, and sustained operation before recording Windows support.
+Tests using real model/export artifacts require the additional ONNX bundle described below.
 
 ## Configuration and supported classes
 
@@ -130,11 +223,23 @@ independent test data for the revised release.
 
 ## Export, verify, and benchmark
 
-An ONNX baseline bundle was created locally. You can use it now:
+An ONNX baseline bundle was created on the development machine. If that bundle is present,
+you can use it now:
 
 ```bash
 venv/bin/python -m object_detection_app run --bundle models/yolo26n-onnx/bundle.json --device cpu
 ```
+
+A fresh Windows setup downloads only the original checkpoint. Create the ONNX bundle
+before selecting it or running the model integration tests:
+
+```powershell
+.\venv\Scripts\python.exe -m object_detection_app export --bundle models/yolo26n/bundle.json --output models/yolo26n-onnx
+.\venv\Scripts\python.exe -m pytest -q --run-model-tests
+```
+
+Export requires a new output directory. If it already exists, inspect its bundle or choose
+a new versioned directory; the integration tests expect `models/yolo26n-onnx/bundle.json`.
 
 For a new checkpoint, use a new versioned output directory:
 
